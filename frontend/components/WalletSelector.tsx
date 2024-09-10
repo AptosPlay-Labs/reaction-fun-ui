@@ -12,24 +12,31 @@ import {
   useWallet,
 } from "@aptos-labs/wallet-adapter-react";
 import { ArrowLeft, ArrowRight, ChevronDown, Copy, LogOut, User } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // Internal components
-import { Button } from "../components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../components/ui/collapsible";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import { useToast } from "../components/ui/use-toast";
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
+import { notificateStore } from "@/store/notificateStore";
 
 export function WalletSelector() {
   const { account, connected, disconnect, wallet } = useWallet();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { seAddress } = notificateStore();
 
+  useEffect(() => {
+    if(account?.address)
+    seAddress(account?.address)
+  }, [account?.address]);
+  
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
 
   const copyAddress = useCallback(async () => {
@@ -88,12 +95,7 @@ function ConnectWalletDialog({ close }: ConnectWalletDialogProps) {
   const { wallets = [] } = useWallet();
   const { aptosConnectWallets, availableWallets, installableWallets } = groupAndSortWallets(wallets);
 
-  // Filtra las billeteras para que solo incluya Petra
-  const filteredAvailableWallets = availableWallets.filter(wallet => wallet.name === 'Petra');
-  const filteredInstallableWallets = installableWallets.filter(wallet => wallet.name === 'Petra');
-  const filteredAptosConnectWallets = aptosConnectWallets.filter(wallet => wallet.name === 'Petra');
-
-  const hasAptosConnectWallets = !!filteredAptosConnectWallets.length;
+  const hasAptosConnectWallets = !!aptosConnectWallets.length;
 
   return (
     <DialogContent className="max-h-screen overflow-auto">
@@ -113,7 +115,7 @@ function ConnectWalletDialog({ close }: ConnectWalletDialogProps) {
 
         {hasAptosConnectWallets && (
           <div className="flex flex-col gap-2 pt-3">
-            {filteredAptosConnectWallets.map((wallet) => (
+            {aptosConnectWallets.map((wallet) => (
               <AptosConnectWalletRow key={wallet.name} wallet={wallet} onConnect={close} />
             ))}
             <p className="flex gap-1 justify-center items-center text-muted-foreground text-sm">
@@ -139,10 +141,10 @@ function ConnectWalletDialog({ close }: ConnectWalletDialogProps) {
         )}
 
         <div className="flex flex-col gap-3 pt-3">
-          {filteredAvailableWallets.map((wallet) => (
+          {availableWallets.map((wallet) => (
             <WalletRow key={wallet.name} wallet={wallet} onConnect={close} />
           ))}
-          {!!filteredInstallableWallets.length && (
+          {!!installableWallets.length && (
             <Collapsible className="flex flex-col gap-3">
               <CollapsibleTrigger asChild>
                 <Button size="sm" variant="ghost" className="gap-2">
@@ -150,7 +152,7 @@ function ConnectWalletDialog({ close }: ConnectWalletDialogProps) {
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="flex flex-col gap-3">
-                {filteredInstallableWallets.map((wallet) => (
+                {installableWallets.map((wallet) => (
                   <WalletRow key={wallet.name} wallet={wallet} onConnect={close} />
                 ))}
               </CollapsibleContent>
@@ -162,17 +164,12 @@ function ConnectWalletDialog({ close }: ConnectWalletDialogProps) {
   );
 }
 
-
 interface WalletRowProps {
   wallet: AnyAptosWallet;
   onConnect?: () => void;
 }
 
 function WalletRow({ wallet, onConnect }: WalletRowProps) {
-  if (wallet.name !== 'Petra') {
-    return null; // No renderiza nada si no es Petra
-  }
-
   return (
     <WalletItem
       wallet={wallet}
@@ -197,10 +194,6 @@ function WalletRow({ wallet, onConnect }: WalletRowProps) {
 }
 
 function AptosConnectWalletRow({ wallet, onConnect }: WalletRowProps) {
-  if (wallet.name !== 'Petra') {
-    return null; // No renderiza nada si no es Petra
-  }
-
   return (
     <WalletItem wallet={wallet} onConnect={onConnect}>
       <WalletItem.ConnectButton asChild>

@@ -1,6 +1,6 @@
+// src/components/ExplodingCell.tsx
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Box } from '@chakra-ui/react';
 
 const ExplodingCell: React.FC<{ count: number; onExplode: () => void }> = ({ count, onExplode }) => {
   return (
@@ -14,7 +14,7 @@ const ExplodingCell: React.FC<{ count: number; onExplode: () => void }> = ({ cou
           transition={{ duration: 1 }}
           onAnimationComplete={onExplode}
         >
-          <Box className="explosion" />
+          <div className="explosion" />
         </motion.div>
       )}
     </AnimatePresence>

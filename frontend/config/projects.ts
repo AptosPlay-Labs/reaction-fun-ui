@@ -1,61 +1,51 @@
 export type Project = {
-    name: string;
-    desc: string;
-    link: string;
-  }
-  
-  export const products: Project[] = [
-    {
-      name: 'Aptos SDK',
-      desc: 'Aptos SDK for JavaScript and TypeScript for interacting with the Aptos blockchain.',
-      link: 'https://github.com/aptos-labs/aptos-core/tree/main/sdk',
-    },
-    {
-      name: 'Aptos Move',
-      desc: 'Move programming language for the Aptos blockchain.',
-      link: 'https://move-language.github.io/move/',
-    },
-    {
-      name: 'Petra Wallet',
-      desc: 'The official wallet for Aptos.',
-      link: 'https://www.petra.app/',
-    },
-    {
-      name: 'Aptos Academy',
-      desc: 'Educational resources and tutorials for learning Aptos.',
-      link: 'https://aptos.dev/academy/',
-    },
-    {
-      name: 'Aptos CLI',
-      desc: 'Command-line interface for managing Aptos accounts and transactions.',
-      link: 'https://github.com/aptos-labs/aptos-core/tree/main/cli',
-    },
-    {
-      name: 'Aptos Explorer',
-      desc: 'Blockchain explorer for Aptos.',
-      link: 'https://explorer.aptos.dev/',
-    },
-  ];
-  
-  export const dependencies: Project[] = [
-    {
-      name: 'Aptos SDK',
-      desc: 'Official SDK for interacting with the Aptos blockchain.',
-      link: 'https://github.com/aptos-labs/aptos-core/tree/main/sdk',
-    },
-    {
-      name: 'React',
-      desc: 'A JavaScript library for building user interfaces.',
-      link: 'https://reactjs.org/',
-    },
-    {
-      name: 'Next.js',
-      desc: 'A React Framework that supports hybrid static & server rendering.',
-      link: 'https://nextjs.org/',
-    },
-    {
-      name: 'Chakra UI',
-      desc: 'A simple, modular and accessible component library for React.',
-      link: 'https://chakra-ui.com/',
-    },
-  ];
+  name: string;
+  desc: string;
+  link: string;
+}
+
+export const products: Project[] = [
+  {
+    name: 'Cosmos Kit',
+    desc: 'A wallet adapter for react with mobile WalletConnect support for the Cosmos ecosystem.',
+    link: 'https://github.com/cosmology-tech/cosmos-kit',
+  },
+  {
+    name: 'Telescope',
+    desc: 'A TypeScript Transpiler for Cosmos Protobufs to generate libraries for Cosmos blockchains.',
+    link: 'https://github.com/cosmology-tech/telescope',
+  },
+  {
+    name: 'TS Codegen',
+    desc: 'The quickest and easiest way to convert CosmWasm Contracts into dev-friendly TypeScript classes.',
+    link: 'https://github.com/CosmWasm/ts-codegen',
+  },
+  {
+    name: 'CosmWasm Academy',
+    desc: 'Master CosmWasm and build your secure, multi-chain dApp on any CosmWasm chain!',
+    link: 'https://academy.cosmwasm.com/',
+  },
+  {
+    name: 'Chain Registry',
+    desc: 'Get chain and asset list information from the npm package for the Official Cosmos chain registry.',
+    link: 'https://github.com/cosmology-tech/chain-registry',
+  },
+  {
+    name: 'Videos',
+    desc: 'How-to videos from the official Cosmology website, with learning resources for building in Cosmos.',
+    link: 'https://cosmology.tech/learn',
+  },
+];
+
+export const dependencies: Project[] = [
+  {
+    name: 'Interchain UI',
+    desc: 'A simple, modular and cross-framework Component Library for Cosmos',
+    link: 'https://chakra-ui.com/docs/components/',
+  },
+  {
+    name: 'Next.js',
+    desc: 'A React Framework supports hybrid static & server rendering.',
+    link: 'https://nextjs.org/',
+  },
+];

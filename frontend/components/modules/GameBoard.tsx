@@ -1,42 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
-//import { useChain } from "@cosmos-kit/react";
-//Aquí he traido el useWallet para usarlo en lugar del useChain de cosmos
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
-// import { CHAIN_NAME } from "../../config";
 import { doc, getDoc, updateDoc, Timestamp, query, collection, where, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import type { Player } from '../../core/ChainReactionGame';
-import {
-    Button,
-    Text,
-    useColorModeValue
-  } from '@chakra-ui/react';
 
-import { notificateStore } from "../../store/notificateStore";
+import { useTheme } from '../ThemeProvider';
+import { notificateStore } from "@/store/notificateStore";
 import {LoadingScreen} from "../common/LoadingScreen";
 import Grid from '../common/Grid';
-import { FirestoreGame } from '../../core/firebaseGame';
+import { FirestoreGame } from '@/core/firebaseGame';
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 
-export function GameBoard({}) {
+export function GameBoard() {
   const [onlyValidation, setOnlyValidation] = useState(0);
+  const { account } = useWallet();
   const { game, grid, currentPlayer, initializeGame, addAtom, players } = useGameStore();
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
-
-  const { connected, account } = useWallet();
-  const [address, setAddress] = useState<any>(null)
-
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
-  const primaryColor = useColorModeValue("#000000", "#FFFFFF");
   const { currentRoom, isSpectator } = notificateStore();
   const { setNotifyCurrentRoom, setIsSpectator } = notificateStore();
   const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    setAddress(account?.address)
-  }, [(account && account.address)])
 
   useEffect(() => {
     setOnlyValidation(0)
@@ -67,7 +51,7 @@ export function GameBoard({}) {
       };
       fetchGame();
     }
-  }, [currentRoom, initializeGame, address]);
+  }, [currentRoom, initializeGame, account?.address]);
 
   useEffect(() => {
     
@@ -84,7 +68,7 @@ export function GameBoard({}) {
     }, 1000);
     return () => clearInterval(timer);
     
-  }, [game, address]);
+  }, [game, account?.address]);
 
 
   async function updatPLayer(game:FirestoreGame, isExit:Boolean){
@@ -95,7 +79,7 @@ export function GameBoard({}) {
     const lost = game?.players.find(player => player.winner==false);
     
     
-    if( game && winner && game.status === "live" && winner?.wallet === address){
+    if( game && winner && game.status === "live" && winner?.wallet === account?.address){
         const playerQuery = query(collection(db, 'players'), where('wallet', '==', winner?.wallet));
         const playerSnapshot = await getDocs(playerQuery);
         if(!playerSnapshot.empty){
@@ -110,7 +94,7 @@ export function GameBoard({}) {
         }
     }
     
-    if( game && winner && game.status === "live" && (lost?.wallet === address||isExit)){
+    if( game && winner && game.status === "live" && (lost?.wallet === account?.address||isExit)){
       console.log("lost")
     console.log(lost?.wallet)
         const playerQuery = query(collection(db, 'players'), where('wallet', '==', lost?.wallet));
@@ -151,16 +135,16 @@ export function GameBoard({}) {
     }
   
     if (game) {
-      let playerAddress = game.players.find(vl => vl.wallet === address);
+      let playerAddress = game.players.find(vl => vl.wallet === account?.address);
       if (playerAddress && playerAddress.play && !winner) {
         setGameStarted(true);
       }
     }
-  }, [game, players, address]);
+  }, [game, players, account?.address]);
 
   const startGame = async () => {
-    if (game && !gameStarted && address) {
-      const playerIndex = game.players.findIndex(player => player.wallet === address);
+    if (game && !gameStarted && account?.address) {
+      const playerIndex = game.players.findIndex(player => player.wallet === account?.address);
       if (playerIndex !== -1) {
         game.players[playerIndex].play = true;
         await updateDoc(game.gameDoc, { players: game.players });
@@ -175,10 +159,10 @@ export function GameBoard({}) {
 
   const handleClick = (row: number, col: number) => {
     const winner = game?.players.find(player => player.winner==true);
-    if (game && !winner && address && currentPlayer?.wallet === address && players.every(player => player.play === true) && game.status && game.status === "live") {
+    if (game && !winner && account?.address && currentPlayer?.wallet === account?.address && players.every(player => player.play === true) && game.status && game.status === "live") {
       addAtom(row, col);
     } else {
-      console.log('Not your turn, address is invalid, or game has a winner');
+      console.log('Not your turn, account?.address is invalid, or game has a winner');
     }
   };
 
@@ -192,7 +176,7 @@ export function GameBoard({}) {
   const exitGame = async () => {
     setLoading(true)
     if (currentRoom && game) {
-        const playerQuery = query(collection(db, 'players'), where('wallet', '==', address));
+        const playerQuery = query(collection(db, 'players'), where('wallet', '==', account?.address));
         const playerSnapshot = await getDocs(playerQuery);
         let playerData: any = null;
         playerSnapshot.forEach((doc) => {
@@ -204,7 +188,7 @@ export function GameBoard({}) {
         const winner = game.players.find((vl:any) => vl.winner===true);
         if(!winner && game.status === "live"){
             game.players.map(vl=>{
-                if(address !== vl.wallet){
+                if(account?.address !== vl.wallet){
                     vl.winner = true    
                 }
                 return vl
@@ -214,7 +198,7 @@ export function GameBoard({}) {
             
         }if ( game.status === "waiting") {
             //revisar en caso sea mas de 2 jugadores, aqui solo se esta mateneindo los jugadores que se queden en el juego
-            let playerList = game.players.filter(vl => vl.wallet !== address);
+            let playerList = game.players.filter(vl => vl.wallet !== account?.address);
             let playerAddress = playerList.map(player => player.wallet) //aqui que retorno ["",""] los adres asi
             let currentPlayerWallet = playerAddress.length>0 ?playerAddress[0]:""
             await updateDoc(game.gameDoc, {
@@ -232,48 +216,75 @@ export function GameBoard({}) {
     setLoading(false)
   };
 
+  const { theme } = useTheme();
+
+
+  const textStyle = {
+    color: theme === 'light' ? '#1a202c' : '#ffffff',
+    margin: '10px 0',
+  };
+
+  const buttonStyle = {
+    backgroundColor: theme === 'light' ? '#3182CE' : '#63B3ED',
+    color: '#ffffff',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginRight: '10px',
+  };
+
+  const disabledButtonStyle = {
+    ...buttonStyle,
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  };
+
+  const progressStyle = {
+    width: '100%',
+    height: '20px',
+  };
+
   return (
     <div>
-      {loading && <LoadingScreen />} 
+      {loading && <LoadingScreen />}
 
       {winner ? (
-        <Text>Ganador: {winner.color} [{formatAddress(winner.wallet)}]</Text>
+        <p style={textStyle}>Ganador: {winner.color} [{formatAddress(winner.wallet)}]</p>
       ) : (
         <div>
-           <Button onClick={startGame} disabled={gameStarted}>Iniciar Juego</Button> 
+          <button 
+            style={gameStarted ? disabledButtonStyle : buttonStyle} 
+            onClick={startGame} 
+            disabled={gameStarted}
+          >
+            Iniciar Juego
+          </button>
           {gameStarted && (
-                <div>
-                    {waitingForOpponent && <Text>Esperando que el otro jugador esté listo...</Text>}    
-                </div>
+            <div>
+              {waitingForOpponent && <p style={textStyle}>Esperando que el otro jugador esté listo...</p>}    
+            </div>
           )}
-          <Text>Turno de: {currentPlayer?.color} [{formatAddress(currentPlayer?.wallet)}]</Text>
+          <p style={textStyle}>Turno de: {currentPlayer?.color} [{formatAddress(currentPlayer?.wallet || '')}]</p>
           <div>
-            {timeLeft !== null && <Text>Tiempo restante: {Math.ceil(timeLeft / 1000)}s</Text>}
-            <progress value={timeLeft ? (30000 - timeLeft) : 0} max="30000" />
+            {timeLeft !== null && <p style={textStyle}>Tiempo restante: {Math.ceil(timeLeft / 1000)}s</p>}
+            <progress style={progressStyle} value={timeLeft ? (30000 - timeLeft) : 0} max="30000" />
           </div>
         </div>
       )}
 
-      {/* <div className="grid">
-        {grid.map((row, rowIndex) => (
-          <div key={rowIndex} className="row">
-            {row.map((cell, colIndex) => (
-              <div
-                key={colIndex}
-                className={`cell ${cell.player?.color}`}
-                onClick={() => handleClick(rowIndex, colIndex)}
-              >
-                <Text color={primaryColor}>{cell.count}</Text> 
-              </div>
-            ))}
-          </div>
-        ))}
-      </div> */}
-    
-    <Grid grid={grid} isBet={game && game.isBettingRoom} handleClick={handleClick} primaryColor="blue" />        
+      <Grid 
+        grid={grid} 
+        isBet={game && game.isBettingRoom} 
+        handleClick={handleClick} 
+        primaryColor="blue" 
+      />        
 
-      {!isSpectator && (<Button onClick={exitGame}>Exit</Button>)}
-      
+      {!isSpectator && (
+        <button style={buttonStyle} onClick={exitGame}>
+          Exit
+        </button>
+      )}
     </div>
   );
 }

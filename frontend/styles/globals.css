@@ -1,6 +1,6 @@
-@import url("./atoms.css"); 
+@import url("./atoms.css");
 
-html,
+/* html,
 body {
   padding: 0;
   margin: 0;
@@ -26,16 +26,16 @@ a {
     color: white;
     background: black;
   }
-}
+} */
 
 
-.grid {
+.board-grid {
   display: grid;
   grid-template-rows: repeat(8, 50px); /* Ajusta el número de filas si es necesario */
   grid-template-columns: repeat(8, 50px); /* Ajusta el número de columnas si es necesario */
 }
 
-.row {
+.board-row {
   display: contents; /* Permite que los elementos hijos sigan el diseño de grid */
 }
 
@@ -78,7 +78,7 @@ a {
 }
 
 
-
+/* 
 .game-rooms {
   display: flex;
   flex-wrap: wrap;
@@ -102,4 +102,4 @@ a {
 
 .game-room-card p {
   margin: 5px 0;
-}
+} */

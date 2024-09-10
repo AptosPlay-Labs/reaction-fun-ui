@@ -4,26 +4,17 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics, type Analytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore'
 
-interface FirebaseConfig {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-  measurementId?: string;
-}
-
 // Configuración de tu aplicación web de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyC306t7VYi8I6H10jU1X0wZjtXhLObr-v4",
-    authDomain: "chainreaction-dd626.firebaseapp.com",
-    projectId: "chainreaction-dd626",
-    storageBucket: "chainreaction-dd626.appspot.com",
-    messagingSenderId: "668384682689",
-    appId: "1:668384682689:web:de3e58086991bdf8df2a40",
-    measurementId: "G-Q08WC6HKEK"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID
 };
+
 
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);

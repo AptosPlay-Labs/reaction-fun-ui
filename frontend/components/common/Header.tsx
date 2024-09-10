@@ -1,89 +1,62 @@
-import React from "react";
-import { dependencies } from "../../config";
 import ChainReactionIcon from "./ChainReactionIcon";
-import { Flex, VStack, Box, Button, Text} from "@chakra-ui/react";
-import { useColorModeValue, useTheme, Icon } from "@interchain-ui/react"
-// parece que solo funciona con interchainUI el useTheme como función o algo
-import { notificateStore } from "../../store/notificateStore";
-
-//const stacks = ["Cosmos", "reactive.fun"];
-
-const stargazejs = dependencies[0];
+import { notificateStore } from "@/store/notificateStore";
+import { Moon, Sun, Copy } from "lucide-react"; // Asumiendo que estás usando lucide-react para iconos
+import { useTheme } from '../ThemeProvider';
+import { WalletSelector } from "../WalletSelector";
 
 export function Header() {
-  const { theme, setTheme } = useTheme();
-  
-  const { address, username } = notificateStore();
+  const { theme, toggleTheme } = useTheme();
+  const { address } = notificateStore();
+
   const toggleColorMode = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    //setTheme(theme === "light" ? "dark" : "light");
+    toggleTheme()
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      // Aquí podrías añadir una notificación de que se ha copiado correctamente
+      console.log("Copiado al portapapeles");
+    });
   };
 
   return (
-    <>
-      <Box display="flex" justifyContent="end" alignItems="center" mb="1" pt="8px" px="26px">
-        {/* Contenedor para el selector de cadenas y el botón de conexión */}
-        <VStack alignItems="center" mx="6px">
-          <Flex alignItems="center">
-            <div>
-              {address}
-            </div>
-          </Flex>
-        </VStack>
-        <Button
-          variant="secondary"
-          size="sm"
-          paddingX={0}
-          onClick={toggleColorMode}
-        >
-          <Icon name={useColorModeValue("moonLine", "sunLine")} />
-        </Button>
-      </Box>
-
-      <Box textAlign="center">
-        <Flex justify="center" align="center">
-          <Text>
+    //className="shadow-md bg-white dark:bg-gray-800"
+    <header> 
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-4">
             <ChainReactionIcon />
-          </Text>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Reactives.fun</h1>
+          </div>
           
-          <Text
-            as="h1"
-            fontWeight="extrabold"
-            fontSize={{ base: "6xl", md: "10xl" }}
-            mb="8"
-          >
-            Reactives.fun
-          </Text>
-        </Flex>
+          
+
+          <div className="flex items-center space-x-4">
+            <WalletSelector />
+            {/* {address && (
+              <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 rounded-full py-1 px-3">
+                <span className="text-sm text-gray-600 dark:text-gray-300">{address.slice(0, 6)}...{address.slice(-4)}</span>
+                <button onClick={() => copyToClipboard(address)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <Copy size={16} />
+                </button>
+              </div>
+            )} */}
+            
+            <button
+              onClick={toggleColorMode}
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white"
+            >
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+          </div>
+        </div>
         
-        <Text as="h2" fontWeight="bold">
-          <Text
-            as="span"
-            fontSize={{ base: "2xl", md: "4xl" }}
-          >
-            Welcome to&nbsp;
-          </Text>
-         
-          <Text
-            as="span"
-            fontSize={{ base: "2xl", md: "4xl" }}
-          >
-            Reactives Chain Funny a
-          </Text>
-          <Text
-            as="span"
-            fontSize={{ base: "2xl", md: "4xl" }}
-            // color={useColorModeValue("$primary500", "$primary200")}
-          >
-            &nbsp;gameFi
-          </Text>
-          <Text
-            as="span"
-            fontSize={{ base: "2xl", md: "4xl" }}
-          >
-            &nbsp;on Cosmos
-          </Text>
-        </Text>
-      </Box> 
-    </>
+        <div className="mt-6 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome to Reactives Chain Funny</h2>
+          <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">A GameFi on Aptos PvP</p>
+        </div>
+      </div>
+    </header>
   );
 }

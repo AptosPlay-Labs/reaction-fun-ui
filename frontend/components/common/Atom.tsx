@@ -1,17 +1,19 @@
-// src/components/Atom.tsx
 import React from 'react';
-import { Box } from '@chakra-ui/react';
 
-const Atom: React.FC<{ count: number }> = ({ count }) => {
-  const atoms = [];
+interface AtomProps {
+  count: number;
+}
 
-  for (let i = 0; i < count; i++) {
-    atoms.push(
-      <Box key={i} className="atom" />
-    );
-  }
+const Atom: React.FC<AtomProps> = ({ count }) => {
+  const atoms = Array.from({ length: count }, (_, i) => (
+    <div key={i} className="atom" />
+  ));
 
-  return <Box className="atoms-container">{atoms}</Box>;
+  return (
+    <div className="atoms-container">
+      {atoms}
+    </div>
+  );
 };
 
 export default Atom;

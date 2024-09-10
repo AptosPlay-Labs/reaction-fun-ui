@@ -1,6 +1,5 @@
 // src/components/Atom.tsx
 import React, { useEffect, useState } from 'react';
-import { Box } from '@chakra-ui/react';
 
 const Atom: React.FC<{ count: number }> = ({ count }) => {
   const orbits = [];
@@ -14,17 +13,17 @@ const Atom: React.FC<{ count: number }> = ({ count }) => {
 
   for (let i = 0; i < count; i++) {
     orbits.push(
-      <Box key={i} className="orbit">
-        <Box className="electron" />
-      </Box>
+      <div key={i} className="orbit">
+        <div className="electron" />
+      </div>
     );
   }
 
   return (
-    <Box id="atom" style={{ transform: `rotate(${rotation}deg)` }}>
-      <Box id="nucleus"></Box>
+    <div id="atom" style={{ transform: `rotate(${rotation}deg)` }}>
+      <div id="nucleus"></div>
       {orbits}
-    </Box>
+    </div>
   );
 };
 

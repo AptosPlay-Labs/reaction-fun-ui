@@ -1,3 +1,4 @@
+// store/gameStore.ts
 import { create } from 'zustand';
 import { FirestoreGame } from '../core/firebaseGame';
 import { Cell, Player } from '../core/ChainReactionGame';
